@@ -1,11 +1,13 @@
 .album-container{
     margin-top:60px;
-    width:80%;
-    margin-left:10%;
+    width:1000%;
+    position:absolute;
+    left:0;
+    transition-duration: 0.5s;
 }
 
 .album{
-    width:25%;
+    width:336px;
     float:left;
     img{
         max-width:100%;
@@ -22,11 +24,11 @@
     font-weight:400;
     font-style: normal;
     padding-bottom:30px;
-    transition-duration:0.3s;
+    color:white;
     h2{
         display:none;
     }
-    background-color:red;
+    background-color:black;
     i{
         font-size:50px; 
         margin:0px 20px;
@@ -69,4 +71,12 @@
     animation-name: slideLeft;
     animation-duration: 0.5s;
     animation-fill-mode: forwards;
+}
+
+.switch-arrows{
+    font-size:50px;
+    margin:0 auto;
+    i{
+        margin:10px 20px;
+    }
 }

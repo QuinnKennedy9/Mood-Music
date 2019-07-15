@@ -1,0 +1,11 @@
+.background-changer{
+    transition-duration: 4s;
+    position: absolute;
+    height:200%;
+    width:100%;
+    z-index:-3;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
