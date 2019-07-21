@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Searchbar from './components/Searchbar/Searchbar';
 import MoodList from './components/MoodList/MoodList'
 import UserMessage from './components/UserMessage/UserMessage'
-import PopularAlbums from './components/PopularAlbums/PopularAlbums';
 import ChangingBackground from './components/ChangingBackground/ChangingBackground';
 import './App.scss';
 
@@ -13,7 +12,7 @@ class App extends Component {
     this.state = {
       input: '',
       results: [],
-      popularResults: [],
+      resultsExtra: [],
       display: 0,
       album: '',
       moods: [],
@@ -42,10 +41,8 @@ class App extends Component {
         this.setState({currentBackground: colours[rotationCounter]});
         if(rotationCounter <rotationLength -1){
           rotationCounter = rotationCounter + 1;
-          console.log(rotationCounter);
         }else if(rotationCounter === rotationLength - 1){
           rotationCounter = 0;
-          console.log(rotationCounter);
         }
         
       }, 6000);
@@ -86,27 +83,53 @@ class App extends Component {
     }
   }
 
-  pullPopularAlbums = () =>{
-    console.log(this.state.newMood);
-    const urlPop = 'http://localhost:8888/mood-music/admin/phpscripts/album_query.php?pullPopular=true';
-    fetch(urlPop)
-        .then((resp) => resp.json())
-        .then((data) => { 
-          this.setState({popularResults: data});
-        })
-        .catch(function(error) {
-          console.log(error);
+  onButtonSubmitExtra = () => {
+    if(this.state.display === 1){
+      this.setState({message: ''});
+      this.setState({display: 0});
+    }
+    var found = false;
+    for(var i = 0; i < this.state.moods.length; i++){
+      if(this.state.moods[i]['mood_name'].toLowerCase() === this.state.input.toLowerCase()){
+        const url = 'http://localhost:8888/mood-music/admin/phpscripts/album_query.php?mood=' +this.state.input;
+        fetch(url)
+            .then((resp) => resp.json())
+            .then((data) => { 
+              this.setState({resultsExtra: data});
+              const firstSet = this.state.results;
+              const secondSet = this.state.resultsExtra;
+              var combinedSet = [];
+              for (var x = 0; x < firstSet.length; x++){
+                for(var y = 0; y < secondSet.length; y++){
+                  if(firstSet[x].album_id === secondSet[y].album_id){
+                    combinedSet.push(secondSet[y]);
+                  }
+                }
+              }
+              this.setState({results:combinedSet});
+            })
+            .catch(function(error) {
+            console.log(error);
         });
+        found = true;
+      }else{
+      }
+    }
+    if(found === false){
+      console.log('firing');
+      this.setState({message:"This mood is not currently in our Database(We're adding it now).  Please browse our most popular albums instead."});
+      this.setState({display:1});
+      
+    }
   }
   
   render() {
     return (
       <div className="App" >
         <ChangingBackground color={this.state.currentBackground} />
-        <Searchbar onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} color={this.state.currentBackground}/>
+        <Searchbar onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} onButtonSubmitExtra={this.onButtonSubmitExtra} color={this.state.currentBackground}/>
         <UserMessage opacity={this.state.display} message={this.state.message}/>
-        <MoodList albums={this.state.results}/>
-        <PopularAlbums albums={this.state.popularResults} mood={this.state.newMood}/>
+        <MoodList albums={this.state.results} color={this.state.currentBackground}/>
       </div>
     );
 

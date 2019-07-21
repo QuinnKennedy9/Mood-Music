@@ -92,29 +92,32 @@ class MoodList extends Component {
         this.state = {
             display: 0,
             nextPosition: 0,
-            currentPosition: '0%'
+            currentPosition: 0
         }
     }
 
     NextAlbums = () => {
-        this.setState({nextPosition: this.state.nextPosition - 100});
-        const concat = this.state.nextPosition + '%';
-        this.setState({currentPosition: concat});
+        const newPosition = this.state.currentPosition - 100;
+        this.setState({currentPosition: newPosition});
+        
         
     }
 
     PrevAlbums = () => {
-
+        if(this.state.currentPosition < 0){
+            const newPosition = this.state.currentPosition + 100;
+            this.setState({currentPosition: newPosition});
+        }
     }
 
     render() {
         return (
             <div>
                 <div className='switch-arrows'>
-                    <i className="fas fa-arrow-left" onClick={this.PrevAlbums}></i>
-                    <i className="fas fa-arrow-right" onClick={this.NextAlbums}></i>
+                    <i className="fas fa-arrow-left changer" onClick={this.PrevAlbums} style={{color:this.props.color}}></i>
+                    <i className="fas fa-arrow-right changer" onClick={this.NextAlbums} style={{color:this.props.color}}></i>
                 </div>
-            <div className = 'album-container' style = {{left:this.state.currentPosition}}>
+            <div className = 'album-container' style = {{left:this.state.currentPosition+'%'}}>
             {this.props.albums.map(item =>
                 <div className='album' key={item.album_id} id={item.album_id}>
                     <Album image = {item.album_art} code={item.album_embed_code} name = {item.album_name} mood={item.mood_album_id} rating={item.ma_rating}/>
